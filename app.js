@@ -2,7 +2,10 @@ const express=require('express')
 const app=express()
 const connectDB=require('./db/connect')
 const tasks=require('./routes/tasks')
+
+app.use(express.static('./public'))
 app.use(express.json())
+
 require('dotenv').config()
 app.get('/',(req,res)=>{
     res.json({success:true,msg:"Hello World"})
