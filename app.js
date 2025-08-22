@@ -2,16 +2,18 @@ const express=require('express')
 const app=express()
 const connectDB=require('./db/connect')
 const tasks=require('./routes/tasks')
+const notFound=require('./middleware/not-found')
 
 app.use(express.static('./public'))
 app.use(express.json())
 
+
 require('dotenv').config()
-app.get('/',(req,res)=>{
-    res.json({success:true,msg:"Hello World"})
-})
+
 
 app.use('/api/v1/tasks',tasks)
+app.use(notFound)
+
 const port=3000
 const start= async()=>{
     try{
