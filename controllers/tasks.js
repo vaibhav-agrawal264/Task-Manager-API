@@ -1,5 +1,8 @@
 const Tasks=require('../models/tasks')
 const asyncWrapper=require('../middleware/async')
+const { createCustomError } = require('../errors/custom-error')
+
+
 const getalltask= asyncWrapper( async (req,res)=>{
 
         const tasks=await Tasks.find({})
@@ -15,12 +18,12 @@ const createtask= asyncWrapper( async (req,res)=>{
     
 })
 
-const gettask=asyncWrapper(async (req,res)=>{
+const gettask=asyncWrapper(async (req,res,next)=>{
     
         const {id:taskID}=req.params
         const task=await Tasks.findOne({_id:taskID})
         if(!task){
-            return res.status(404).json({msg:`No task with the given task id:${taskID}`})
+            return next(createCustomError(`No task with ID: ${taskID}`,404))
         }
         res.json({task})
    
@@ -32,7 +35,7 @@ const deletetask=asyncWrapper(async (req,res)=>{
         const {id:taskID}=req.params
         const task=await Tasks.findOneAndDelete({_id:taskID})
         if(!task){
-            return res.status(404).json({msg:`No task with id:${taskID}`})
+            return next(createCustomError(`No task with ID: ${taskID}`,404))
         }
         res.status(200).json({task})
     
@@ -46,7 +49,7 @@ const updatetask=asyncWrapper( async (req,res)=>{
             runValidators:true
         })
         if(!task){
-            return res.status(404).json({msg:`No task with id: ${taskID}`})
+            return next(createCustomError(`No task with ID: ${taskID}`,404))
         }
         res.status(200).json({task})
    
